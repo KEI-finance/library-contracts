@@ -2,12 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-import "./IERC721Describable.sol";
-import "./IERC721Descriptor.sol";
+import {IERC721Describable} from "./IERC721Describable.sol";
+import {IERC721Descriptor} from "./IERC721Descriptor.sol";
+import {IERC721DescribableErrors} from "./IERC721DescribableErrors.sol";
 
-abstract contract ERC721Describable is IERC721Describable, ERC721 {
+abstract contract ERC721Describable is IERC721Describable, IERC721DescribableErrors, ERC721 {
     address private $descriptor;
 
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
@@ -24,12 +25,18 @@ abstract contract ERC721Describable is IERC721Describable, ERC721 {
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         _requireOwned(tokenId);
         IERC721Descriptor _descriptor = IERC721Descriptor($descriptor);
-        require(address(_descriptor) != address(0), "ERC721Describable: MISSING_DESCRIPTOR");
+
+        if (address(_descriptor) == address(0)) {
+            revert ERC721DescribableMissingDescriptor();
+        }
+
         return _descriptor.tokenURI(tokenId, _tokenURIData(tokenId));
     }
 
     function _updateDescriptor(address newDescriptor) internal virtual {
-        require(newDescriptor != address(0), "ERC721Describable: INVALID_DESCRIPTOR");
+        if (newDescriptor == address(0)) {
+            revert ERC721DescribableInvalidDescriptor(newDescriptor);
+        }
         emit DescriptorUpdate($descriptor, newDescriptor, _msgSender());
         $descriptor = newDescriptor;
     }

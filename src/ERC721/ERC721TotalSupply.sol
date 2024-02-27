@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity =0.8.20;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-import "./IERC721TotalSupply.sol";
+import {IERC721TotalSupply} from "./IERC721TotalSupply.sol";
 
 abstract contract ERC721TotalSupply is IERC721TotalSupply, ERC721 {
     uint256 private $totalSupply;
