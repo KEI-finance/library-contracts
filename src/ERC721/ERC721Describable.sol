@@ -22,7 +22,7 @@ abstract contract ERC721Describable is IERC721Describable, ERC721 {
      * @dev See {IERC721Metadata-tokenURI}.
      */
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        _requireMinted(tokenId);
+        _requireOwned(tokenId);
         IERC721Descriptor _descriptor = IERC721Descriptor($descriptor);
         require(address(_descriptor) != address(0), "ERC721Describable: MISSING_DESCRIPTOR");
         return _descriptor.tokenURI(tokenId, _tokenURIData(tokenId));
