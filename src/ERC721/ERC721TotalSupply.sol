@@ -12,17 +12,17 @@ abstract contract ERC721TotalSupply is IERC721TotalSupply, ERC721 {
         return $totalSupply;
     }
 
-    function _mint(address to, uint256 tokenId) internal virtual override {
-        super._mint(to, tokenId);
-        unchecked {
-            ++$totalSupply;
+    function _update(address to, uint256 tokenId, address auth) internal virtual override returns (address) {
+        address _from = _ownerOf(tokenId);
+        if (_from == address(0)) {
+            unchecked {
+                ++$totalSupply;
+            }
+        } else if (to == address(0)) {
+            unchecked {
+                --$totalSupply;
+            }
         }
-    }
-
-    function _burn(uint256 tokenId) internal virtual override {
-        super._burn(tokenId);
-        unchecked {
-            --$totalSupply;
-        }
+        return super._update(to, tokenId, auth);
     }
 }

@@ -30,7 +30,7 @@ abstract contract BaseScript is Script {
 
     function getAddress(string memory name, bytes memory args) internal view returns (address) {
         bytes32 hash = hashInitCode(vm.getCode(name), args);
-        return vm.computeCreate2Address(config.salt, hash);
+        return computeCreate2Address(config.salt, hash);
     }
 
     function deploy(string memory name) internal returns (address addr) {
@@ -50,7 +50,7 @@ abstract contract BaseScript is Script {
         deployment[name] = addr;
 
         if (addr.code.length == 0) {
-            require(deployIfMissing, string.concat('MISSING_CONTRACT_', name));
+            require(deployIfMissing, string.concat("MISSING_CONTRACT_", name));
 
             bytes memory bytecode = abi.encodePacked(vm.getCode(name), args);
             bytes32 salt = config.salt;
@@ -69,6 +69,6 @@ abstract contract BaseScript is Script {
 
         string memory key = string.concat(".", vm.toString(block.chainid));
 
-//        config.salt = bytes32(json.readUint(string.concat(key, ".salt")));
+        //        config.salt = bytes32(json.readUint(string.concat(key, ".salt")));
     }
 }
