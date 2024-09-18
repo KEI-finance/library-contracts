@@ -6,7 +6,7 @@ import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Ini
 import {IERC721TotalSupply} from "./IERC721TotalSupply.sol";
 
 abstract contract ERC721TotalSupplyUpgradeable is Initializable, IERC721TotalSupply, ERC721Upgradeable {
-    
+
     /// @custom:storage-location erc7201:erc721.totalsupply.storage
     struct ERC721TotalSupplyStorage {
         uint256 totalSupply;
@@ -31,18 +31,20 @@ abstract contract ERC721TotalSupplyUpgradeable is Initializable, IERC721TotalSup
     }
 
     function totalSupply() public view virtual override returns (uint256) {
-        return $totalSupply;
+        return _getERC721TotalSupplyStorage().totalSupply;
     }
 
     function _update(address to, uint256 tokenId, address auth) internal virtual override returns (address) {
+        ERC721TotalSupplyStorage storage $ = _getERC721TotalSupplyStorage();
+
         address _from = _ownerOf(tokenId);
         if (_from == address(0)) {
             unchecked {
-                ++$totalSupply;
+                ++$.totalSupply;
             }
         } else if (to == address(0)) {
             unchecked {
-                --$totalSupply;
+                --$.totalSupply;
             }
         }
         return super._update(to, tokenId, auth);

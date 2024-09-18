@@ -31,7 +31,7 @@ abstract contract ERC721DescribableUpgradeable is Initializable, IERC721Describa
         $.descriptor = address(0);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, IERC721Describable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return interfaceId == type(IERC721Describable).interfaceId || super.supportsInterface(interfaceId);
     }
 
