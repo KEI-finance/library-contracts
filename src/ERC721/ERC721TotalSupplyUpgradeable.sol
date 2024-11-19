@@ -21,11 +21,11 @@ abstract contract ERC721TotalSupplyUpgradeable is Initializable, IERC721TotalSup
         }
     }
 
-    function __ERC721TotalSupply_init() internal initializer {
+    function __ERC721TotalSupply_init() internal onlyInitializing {
         __ERC721TotalSupply_init_unchained();
     }
 
-    function __ERC721TotalSupply_init_unchained() internal initializer {
+    function __ERC721TotalSupply_init_unchained() internal onlyInitializing {
         ERC721TotalSupplyStorage storage $ = _getERC721TotalSupplyStorage();
         $.totalSupply = 0;
     }

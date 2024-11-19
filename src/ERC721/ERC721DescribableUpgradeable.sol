@@ -22,11 +22,11 @@ abstract contract ERC721DescribableUpgradeable is Initializable, IERC721Describa
         }
     }
 
-    function __ERC721Describable_init() internal initializer {
+    function __ERC721Describable_init() internal onlyInitializing {
         __ERC721Describable_init_unchained();
     }
 
-    function __ERC721Describable_init_unchained() internal initializer {
+    function __ERC721Describable_init_unchained() internal onlyInitializing {
         ERC721DescribableStorage storage $ = _getERC721DescribableStorage();
         $.descriptor = address(0);
     }
