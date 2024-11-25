@@ -6,29 +6,36 @@ import {BaseTest} from "@kei.fi/testing-lib/BaseTest.sol";
 
 import {DeployScript} from "script/Deploy.s.sol";
 
-contract DeployTest is BaseTest {
+contract DeployTest is BaseTest, DeployScript {
+    function setUp() public virtual override {
+        super.setUp();
+    }
+}
+
+contract DeployTest__run is DeployTest {
     struct ExpectDeployment {
         string name;
         address addr;
     }
 
-    ExpectDeployment[] internal expected;
+    mapping(uint256 => ExpectDeployment[]) internal expected;
 
-    function setUp() external {
-        expected.push(ExpectDeployment("AccountSetup.sol", 0x0b0f227Ba880F5781a40e05AeA3981D9bc4260FE));
+    function setUp() public virtual override {
+        super.setUp();
+
+        // forge test network
+        expected[31337].push(ExpectDeployment("Counter", 0xBe7AC52D4e460b465cdd8ff939275Df60Ee17483));
+        // abitrum network
+        expected[42161].push(ExpectDeployment("Counter", 0x0000000000000000000000000000000000000000));
+        // sepolia network
+        expected[11155111].push(ExpectDeployment("Counter", 0x0000000000000000000000000000000000000000));
     }
 
-    function test_deploy() external {
-        vm.chainId(5);
-
-        DeployScript script = new DeployScript();
-
-        script.setUp();
-        script.run();
-
-        for (uint256 i; i < expected.length; i++) {
-            ExpectDeployment memory expectedDeployment = expected[i];
-            address deployment = script.deployment(expectedDeployment.name);
+    function assert_deployments() public {
+        ExpectDeployment[] memory deployments = expected[block.chainid];
+        for (uint256 i; i < deployments.length; i++) {
+            ExpectDeployment memory expectedDeployment = deployments[i];
+            address deployment = deployment[expectedDeployment.name];
             assertEq(
                 deployment,
                 expectedDeployment.addr,
@@ -41,5 +48,10 @@ contract DeployTest is BaseTest {
                 )
             );
         }
+    }
+
+    function test_deploy() external {
+        run();
+        assert_deployments();
     }
 }
